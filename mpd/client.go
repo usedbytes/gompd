@@ -372,6 +372,61 @@ func (c *Client) PlaylistInfo(start, end int) (pls []Attrs, err error) {
 	return pls[start:end], nil
 }
 
+// PlaylistFind returns attributes for songs matching the tag/needle exactly
+func (c* Client) PlaylistFind(tag, needle string) (pls []Attrs, err error) {
+	id, err := c.text.Cmd("playlistfind %s %s", tag, needle)
+	if err != nil {
+		return nil, err
+	}
+	c.text.StartResponse(id)
+	defer c.text.EndResponse(id)
+	return c.readAttrsList("file")
+}
+
+// PlaylistId displays all songs in the playlist, or if id is positive
+// the info for that song
+func (c *Client) PlaylistId(id int) (pls []Attrs, err error) {
+	if id > 0 {
+		id, err := c.text.Cmd("playlistid %d", id)
+		if err != nil {
+			return nil, err
+		}
+		c.text.StartResponse(id)
+		defer c.text.EndResponse(id)
+		return c.readAttrsList("file")
+	}
+	rid, err := c.text.Cmd("playlistid")
+	if err != nil {
+		return nil, err
+	}
+	c.text.StartResponse(rid)
+	defer c.text.EndResponse(rid)
+	return c.readAttrsList("file")
+}
+
+// PlaylistSearch returns attributes for songs partially matching the
+// tag/needle (case-sensitive)
+func (c* Client) PlaylistSearch(tag, needle string)	(pls []Attrs, err error) {
+	id, err := c.text.Cmd("playlistsearch %s %s", tag, needle)
+	if err != nil {
+		return nil, err
+	}
+	c.text.StartResponse(id)
+	defer c.text.EndResponse(id)
+	return c.readAttrsList("file")
+}
+
+// PlaylistChanges returns changed songs since playlist version version
+func (c* Client) PlaylistChanges(version uint) (pls []Attrs, err error) {
+	id, err := c.text.Cmd("plchanges %d", version)
+	if err != nil {
+		return nil, err
+	}
+	c.text.StartResponse(id)
+	defer c.text.EndResponse(id)
+	return c.readAttrsList("file")
+}
+
 // Delete deletes songs from playlist. If both start and end are positive,
 // it deletes those at positions in range [start, end). If end is negative,
 // it deletes the song at position start.
