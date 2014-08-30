@@ -221,6 +221,10 @@ func (c *Client) okCmd(format string, args ...interface{}) error {
 	return c.readOKLine("OK")
 }
 
+func (c *Client) Idle(subsystems ...string) ([]string, error) {
+	return c.idle(subsystems...)
+}
+
 func (c *Client) idle(subsystems ...string) ([]string, error) {
 	id, err := c.cmd("idle %s", strings.Join(subsystems, " "))
 	if err != nil {
@@ -229,6 +233,10 @@ func (c *Client) idle(subsystems ...string) ([]string, error) {
 	c.text.StartResponse(id)
 	defer c.text.EndResponse(id)
 	return c.readList("changed")
+}
+
+func (c *Client) NoIdle() (err error) {
+	return c.noIdle();
 }
 
 func (c *Client) noIdle() (err error) {
