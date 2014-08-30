@@ -290,6 +290,16 @@ func (c *Client) Seek(pos, time int) error {
 	return c.okCmd("seek %d %d", pos, time)
 }
 
+// Seekrel seeks a relative amount in the current song
+func (c *Client) Seekrel(time int) error {
+	return c.okCmd("seekcur %+d", time)
+}
+
+// Seekcur seeks to a specific time in the current song
+func (c *Client) Seekcur(time int) error {
+	return c.okCmd("seekcur %d", time)
+}
+
 // SeekId is identical to Seek except the song is identified by it's id
 // (not position in playlist).
 func (c *Client) SeekId(id, time int) error {
