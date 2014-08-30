@@ -249,12 +249,17 @@ func (c *Client) Next() error {
 	return c.okCmd("next")
 }
 
+// Wrapper for boolean commands
+func (c *Client) boolCmd(cmd string, value bool) error {
+	if value {
+		return c.okCmd("%s 1", cmd)
+	}
+	return c.okCmd("%s 0", cmd)
+}
+
 // Pause pauses playback if pause is true; resumes playback otherwise.
 func (c *Client) Pause(pause bool) error {
-	if pause {
-		return c.okCmd("pause 1")
-	}
-	return c.okCmd("pause 0")
+	return c.boolCmd("pause", pause)
 }
 
 // Play starts playing the song at playlist position pos. If pos is negative,
@@ -303,18 +308,23 @@ func (c *Client) SetVolume(volume int) error {
 
 // Random enables random playback, if random is true, disables it otherwise.
 func (c *Client) Random(random bool) error {
-	if random {
-		return c.okCmd("random 1")
-	}
-	return c.okCmd("random 0")
+	return c.boolCmd("random", random)
 }
 
 // Repeat enables repeat mode, if repeat is true, disables it otherwise.
 func (c *Client) Repeat(repeat bool) error {
-	if repeat {
-		return c.okCmd("repeat 1")
-	}
-	return c.okCmd("repeat 0")
+	return c.boolCmd("repeat", repeat)
+}
+
+// Single sets single play mode. This either stops after the current
+// song, or repeats it depending on repeat setting
+func (c *Client) Single(single bool) error {
+	return c.boolCmd("single", single)
+}
+
+// Consume sets whether items should be removed after being played
+func (c *Client) Consume(consume bool) error {
+	return c.boolCmd("consume", consume)
 }
 
 //
